@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Список дел</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="header">
+        <h1>Мой Список Дел</h1>
+        <p class="text-muted">Организуйте свои задачи</p>
+    </div>
+
+    <form method="POST" action="/add" class="task-form">
+        <div class="form-group">
+            <label for="title">Название задачи</label>
+            <input type="text" name="title" id="title" class="form-control" placeholder="Что нужно сделать?" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="description">Описание</label>
+            <textarea name="description" id="description" class="form-control" placeholder="Детали задачи..."></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Добавить задачу</button>
+    </form>
+
+    <ul class="task-list">
+        {% for todo in todo_list %}
+        <li class="task-item {% if todo.completed %}completed{% endif %}">
+            <h3 class="task-title">{{ todo.title }}</h3>
+            {% if todo.description %}
+                <p class="task-description">{{ todo.description }}</p>
+            {% endif %}
+            <div class="task-meta">
+                <span class="text-muted">Создано: {{ todo.created_at.strftime('%d.%m.%Y %H:%M') }}</span>
+                {% if todo.completed %}
+                    <span class="text-muted">Выполнено</span>
+                {% endif %}
+            </div>
+            
+            <div class="task-actions">
+                {% if not todo.completed %}
+                    <a href="/complete/{{ todo.id }}" class="btn btn-success">Завершить</a>
+                {% endif %}
+                <a href="/delete/{{ todo.id }}" class="btn btn-danger">Удалить</a>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
