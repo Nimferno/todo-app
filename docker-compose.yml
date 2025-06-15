@@ -1,0 +1,30 @@
+services:
+  web:
+    build: .
+    ports:
+      - "0.0.0.0:5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://todo_user:todo_pass@db:5432/todo_db
+    depends_on:
+      - db
+    networks:
+      - todo-network
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=todo_user
+      - POSTGRES_PASSWORD=todo_pass
+      - POSTGRES_DB=todo_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    networks:
+      - todo-network
+
+networks:
+  todo-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
